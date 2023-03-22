@@ -111,12 +111,12 @@ app.post("/login", (req, res) => {
 
 // endpoint libre
 app.get("/free-endpoint", (request, response) => {
-  response.json({ message: "You are free to access me anytime" });
+  response.json({ message: "Bienvenido a la RUTA LIBRE" });
 });
 
 // endpoint autenticado
 app.get("/auth-endpoint", auth, (request, response) => {
-  response.json({ message: "You are authorized to access me" });
+  response.json({ message: "Bienvenido a la RUTA PRIVADA" });
 });
 
 
