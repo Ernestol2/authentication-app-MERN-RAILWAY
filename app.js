@@ -34,36 +34,50 @@ app.get("/", (request, response, next) => {
 });
 
 app.post("/register", (req, res) => {
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hashPassword) => {
-      const user = new User ({
-        email: req.body.email,
-        password: hashPassword,
-      });
-      user
-        .save()
-        .then((result) => {
-          res.status(201).send({
-            message: "User create Succesfully",
-            result,
+  
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if(user) {
+        bcrypt
+          .compare(req.body.password, user.password)
+          .then((passwordCheck) => {
+            if(passwordCheck) {
+              console.log({ message: "usuario y contraseña validos" });
+              res.json({ message: "Usuario Registrado, puede hacer login" })
+            }
+          })
+      } else {
+        bcrypt
+        .hash(req.body.password, 10)
+        .then((hashPassword) => {
+          const user = new User({
+            email: req.body.email,
+            password: hashPassword,
           });
+          user
+            .save()
+            .then((result) => {
+              res.status(201).send({
+                message: "Usuario creado Exitosamente",
+                result,
+              });
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: "Error creando el usuario",
+                err,
+              });
+            });
         })
-        .catch((error) => {
+        .catch((e) => {
           res.status(500).send({
-            message: "Error creating user",
-            error,
+            message: "Contraseña no fue encryptada",
+            e,
           });
         });
-      })
-    .catch((e) => {
-      res.status(500).send({
-        message: "password was not hashed",
-        e,
-      })
-    })  
-
-})
+      }
+  })
+});
 
 app.post("/login", (req, res) => {
 
