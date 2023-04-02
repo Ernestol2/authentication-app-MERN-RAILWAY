@@ -42,8 +42,11 @@ app.post("/register", (req, res) => {
           .compare(req.body.password, user.password)
           .then((passwordCheck) => {
             if(passwordCheck) {
-              console.log({ message: "usuario y contraseña validos" });
-              res.json({ message: "Usuario Registrado, puede hacer login" })
+              res.send({ message: "Usuario Registrado, puede hacer login",
+                         success: true })
+            } else {
+              res.send({ message: "E-mail ya registrado. Verifica contraseña o ingresa un nuevo E-mail",
+                         success: false })
             }
           })
       } else {
@@ -59,12 +62,14 @@ app.post("/register", (req, res) => {
             .then((result) => {
               res.status(201).send({
                 message: "Usuario creado Exitosamente",
+                success: true,
                 result,
               });
             })
             .catch((err) => {
               res.status(500).send({
                 message: "Error creando el usuario",
+                success: false,
                 err,
               });
             });
@@ -72,6 +77,7 @@ app.post("/register", (req, res) => {
         .catch((e) => {
           res.status(500).send({
             message: "Contraseña no fue encryptada",
+            success: false,
             e,
           });
         });
